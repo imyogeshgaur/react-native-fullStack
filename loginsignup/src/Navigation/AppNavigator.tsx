@@ -3,11 +3,25 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import HomeScreen from '../screens/HomeScreen';
 import LoginScreen from '../screens/LoginScreen';
 import SignUpScreen from '../screens/SignUpScreen';
-import {NavigationContainer} from '@react-navigation/native';
+import {NavigationContainer, useNavigation} from '@react-navigation/native';
 import AdminScreen from '../screens/AdminScreen';
+import EditPassword from '../screens/EditPassword';
+import Icon from 'react-native-vector-icons/AntDesign';
+import {TouchableOpacity} from 'react-native';
+import CreateByAdminScreen from '../screens/CreateByAdminScreen';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const Stack = createNativeStackNavigator();
 
 const StackNavigator = () => {
+  const navigator: any = useNavigation();
+  const navigateToUserCreationScreen = () => {
+    navigator.navigate('Create');
+  };
+
+  const logoutUser = async () => {
+    navigator.goBack();
+    await AsyncStorage.removeItem('token');
+  };
   return (
     <Stack.Navigator initialRouteName="LoginScreen">
       <Stack.Screen
@@ -19,6 +33,12 @@ const StackNavigator = () => {
             backgroundColor: 'rgb(179, 124, 247)',
           },
           headerTitleAlign: 'center',
+          headerRight: () => (
+            <TouchableOpacity onPress={logoutUser}>
+              <Icon name="logout" size={26} style={{fontWeight:"bold"}} />
+            </TouchableOpacity>
+          ),
+          headerLeft: () => <></>,
         }}
       />
       <Stack.Screen
@@ -36,11 +56,55 @@ const StackNavigator = () => {
         name="Admin"
         component={AdminScreen}
         options={{
-          title: 'Users Data',
+          title: 'Admin Panel',
           headerStyle: {
             backgroundColor: 'rgb(179, 124, 247)',
           },
           headerTitleAlign: 'center',
+          headerRight: () => (
+            <>
+              <TouchableOpacity onPress={navigateToUserCreationScreen}>
+                <Icon name="user" size={30}/>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={logoutUser}>
+                <Icon name="logout" 
+                size={26} 
+                style={{marginLeft:10,fontWeight:"bold"}}/>
+              </TouchableOpacity>
+            </>
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="Password"
+        component={EditPassword}
+        options={{
+          title: 'Edit Password',
+          headerStyle: {
+            backgroundColor: 'rgb(179, 124, 247)',
+          },
+          headerTitleAlign: 'center',
+          headerRight: () => (
+            <TouchableOpacity onPress={logoutUser}>
+              <Icon name="logout" size={30} style={{fontWeight:"bold"}}/>
+            </TouchableOpacity>
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="Create"
+        component={CreateByAdminScreen}
+        options={{
+          title: 'Create User',
+          headerStyle: {
+            backgroundColor: 'rgb(179, 124, 247)',
+          },
+          headerTitleAlign: 'center',
+          headerRight: () => (
+            <TouchableOpacity onPress={logoutUser}>
+              <Icon name="logout" size={26} style={{fontWeight:"bold"}}/>
+            </TouchableOpacity>
+          ),
         }}
       />
     </Stack.Navigator>

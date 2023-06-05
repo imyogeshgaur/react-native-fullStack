@@ -2,6 +2,7 @@ export interface UserDetails {
     userName?: String;
     userEmail: String;
     userPassword: String;
+    userRole?:String;
 }
 
 export interface LoginDetails{

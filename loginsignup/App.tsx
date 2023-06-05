@@ -1,4 +1,3 @@
-
 import AppNavigator from './src/Navigation/AppNavigator'
 
 const App = () => {

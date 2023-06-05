@@ -54,7 +54,6 @@ class AuthService {
             } else {
                 const isUserExist = await this.auth.findOne({ userName: userEmail });
                 if (!isUserExist) return -1;
-
                 const isPasswordMatch = await compare(userPassword as string, isUserExist.userPassword as string);
                 if (!isPasswordMatch) return 0;
 

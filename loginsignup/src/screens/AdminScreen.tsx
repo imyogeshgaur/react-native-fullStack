@@ -1,15 +1,17 @@
 import {useRoute} from '@react-navigation/native';
 import axios from 'axios';
-import {useEffect, useMemo, useState} from 'react';
-import {ScrollView, StyleSheet, TextInput, View} from 'react-native';
+import {useEffect, useState} from 'react';
+import {ScrollView, StyleSheet, Text, TextInput, View} from 'react-native';
 import Card from '../components/Card';
 import {getAllDetailsApi} from '../constants/CONSTANTS';
 
 const AdminScreen = () => {
   const [Data, setData] = useState<Array<any>>([]);
+  const [message, setMessage] = useState<string>("");
   const [search, setSearch] = useState('');
   const routes: any = useRoute();
   const token = routes.params.tokenData;
+
   useEffect(() => {
     axios
       .get(getAllDetailsApi, {
@@ -17,7 +19,10 @@ const AdminScreen = () => {
           Authorization: token as string,
         },
       })
-      .then(res => setData(res.data.allUsers))
+      .then(res => {
+        res.data.message ? setMessage(res.data.message) : setMessage("")
+        setData(res.data.allUsers)
+      })
       .catch(err => console.log(err));
   }, []);
 
@@ -28,6 +33,7 @@ const AdminScreen = () => {
     else if (val.userEmail.toLowerCase().includes(search.toLowerCase()))
       return val.userEmail;
   });
+
 
   return (
     <>
@@ -40,17 +46,25 @@ const AdminScreen = () => {
       <View>
         <ScrollView>
           <View style={styles.container}>
-            {filteredData.map((val: any) => {
-              return (
-                <Card
-                  userName={val.userName}
-                  userEmail={val.userEmail}
-                  userId={val._id}
-                  tokenOfAdmin={token}
-                  key={val._id}
-                />
-              );
-            })}
+            { 
+              filteredData.length === 0 ? (<Text style={styles.noUserFound}>{message}</Text>): (
+              <>
+                {
+                  filteredData.map((val: any) => {
+                    return (
+                      <Card
+                        userName={val.userName}
+                        userEmail={val.userEmail}
+                        userId={val._id}
+                        tokenOfAdmin={token}
+                        key={val._id}
+                      />
+                    );
+                  })
+                }
+              </>
+              )
+            }
           </View>
         </ScrollView>
       </View>
@@ -74,4 +88,9 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     marginLeft: 70,
   },
+  noUserFound:{
+    color:"black",
+    fontSize:34,
+    fontWeight:"bold"
+  }
 });

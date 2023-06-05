@@ -41,6 +41,9 @@ class AuthController {
     async signUpUser() {
         try {
             const userData: UserDetails = this.req.body;
+            if (!userData.userEmail || !userData.userPassword) {
+                return this.res.status(201).send({ message: "Please Fill Required Fields !!!" })
+            }
             const user = await this.service.signUpUser(userData);
             return this.res.status(201).send({ message: "User Created Successfully !!!", user })
         } catch (error) {
@@ -64,7 +67,7 @@ class AuthController {
     async getAllUsers() {
         try {
             const allUsers: any = await this.service.getAllUsers();
-            if (allUsers.length === 0) return this.res.status(200).send({ message: "No User Found" })
+            if (allUsers.length === 0) return this.res.status(200).send({ message: "No User Found", allUsers })
             return this.res.status(200).send({ allUsers })
         } catch (error) {
             console.log("Get All Controller Error : " + error)

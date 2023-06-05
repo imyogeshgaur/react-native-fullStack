@@ -15,7 +15,6 @@ import {getDetailsApi, updateDetailsApi} from '../constants/CONSTANTS';
 const HomeScreen = () => {
   const [userName, setUserName] = useState<string>('');
   const [userEmail, setUserEmail] = useState<string>('');
-  const [userPassword, setUserPassword] = useState<string>('');
   const [userRole, setUserRole] = useState<string>('');
   const navigator: any = useNavigation();
   const routers: any = useRoute();
@@ -31,7 +30,6 @@ const HomeScreen = () => {
         .then(res => {
           setUserName(res.data.user.userName);
           setUserEmail(res.data.user.userEmail);
-          setUserPassword(res.data.user.userPassword);
           setUserRole(res.data.user.userRole);
         })
         .catch(err => console.log(err));
@@ -45,7 +43,6 @@ const HomeScreen = () => {
         {
           userName,
           userEmail,
-          userPassword,
         },
         {
           headers: {
@@ -60,14 +57,13 @@ const HomeScreen = () => {
     }
   };
 
-  const navigateToSeeUser = ()=>{
-    navigator.navigate("Admin",{tokenData:token})
-  }
-
-  const logoutUser = async () => {
-    navigator.goBack();
-    await AsyncStorage.removeItem('token');
+  const navigateToEditPassword = () => {
+    navigator.navigate('Password', {token});
   };
+  const navigateToSeeUser = () => {
+    navigator.navigate('Admin', {tokenData: token});
+  };
+
   return (
     <View style={styles.centered}>
       <Text style={styles.label}>UserName</Text>
@@ -82,13 +78,6 @@ const HomeScreen = () => {
         value={userEmail}
         onChangeText={setUserEmail}
       />
-      <Text style={styles.label}>Password</Text>
-      <TextInput
-        style={styles.input}
-        secureTextEntry={true}
-        value={userPassword}
-        onChangeText={setUserPassword}
-      />
       <View style={styles.btnContainer}>
         {userRole === 'Admin' ? (
           <>
@@ -100,17 +89,21 @@ const HomeScreen = () => {
             <TouchableOpacity style={styles.button} onPress={editUserDetails}>
               <Text style={styles.buttonText}>Edit Details</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.logoutButton} onPress={logoutUser}>
-              <Text style={styles.buttonText}>Log Out</Text>
+            <TouchableOpacity
+              style={styles.editPasswordButton}
+              onPress={navigateToEditPassword}>
+              <Text style={styles.buttonText}>Set Password</Text>
             </TouchableOpacity>
           </>
         ) : (
           <>
+            <TouchableOpacity
+              style={styles.editPasswordButton}
+              onPress={navigateToEditPassword}>
+              <Text style={styles.buttonText}>Set Password</Text>
+            </TouchableOpacity>
             <TouchableOpacity style={styles.button} onPress={editUserDetails}>
               <Text style={styles.buttonText}>Edit Details</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.logoutButton} onPress={logoutUser}>
-              <Text style={styles.buttonText}>Log Out</Text>
             </TouchableOpacity>
           </>
         )}
@@ -165,10 +158,17 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   seeDetailsButton: {
-    backgroundColor: 'rgb(245, 214, 42)',
+    backgroundColor: 'rgb(51, 150, 36)',
     padding: 10,
     borderRadius: 5,
     width: 100,
+    marginTop: 10,
+  },
+  editPasswordButton: {
+    backgroundColor: 'rgb(67, 185, 232)',
+    padding: 10,
+    borderRadius: 5,
+    width: 110,
     marginTop: 10,
   },
   buttonText: {
